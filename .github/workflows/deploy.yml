@@ -1,9 +1,12 @@
-name: Build, publish, and deploy Backend Docker image to EC2
+name: Build, publish, and deploy Docker image to EC2
 
 on:
   push:
     branches:
-      - main
+      - dev 
+      - qa
+      - stage
+      - production
 
 jobs:
   build:
@@ -23,34 +26,41 @@ jobs:
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
-
+ 
       - name: Build Docker image
         run: |
-          docker build -t mina-frontend .
-      
+          docker build -t kritan-react-frontend .
+ 
       - name: Tag Docker image
         run: |
-          docker tag mina-frontend:latest 654654282708.dkr.ecr.ap-southeast-1.amazonaws.com/mina-frontend:latest
-      
+          docker tag kritan-react-frontend:latest 654654282708.dkr.ecr.ap-southeast-1.amazonaws.com/kritan-react-frontend:${{ github.ref_name }}-latest
+
       - name: Push Docker image to Amazon ECR
         run: |
-          docker push 654654282708.dkr.ecr.ap-southeast-1.amazonaws.com/mina-frontend:latest
+          docker push 654654282708.dkr.ecr.ap-southeast-1.amazonaws.com/kritan-react-frontend:${{ github.ref_name }}-latest
 
   deploy:
     runs-on: ubuntu-latest
-    needs: build  # This ensures the deploy job runs after the build job
+    needs: build
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-      - name: Deploy code EC2
+
+      - name: SSH into EC2 and deploy
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: ${{ secrets.EC2_PORT}}
+          port: ${{ secrets.EC2_PORT }}
           script: |
-            sudo docker pull 654654282708.dkr.ecr.ap-southeast-1.amazonaws.com/mina-frontend:latest
-            sudo docker stop frontend || true
-            sudo docker rm frontend || true
-            sudo docker run -d --name frontend -p 3000:80 654654282708.dkr.ecr.ap-southeast-1.amazonaws.com/mina-frontend:latest
+            if [ "${{ github.ref_name }}" == "production" ]; then
+              sh deploy-production.sh
+            elif [ "${{ github.ref_name }}" == "stage" ]; then
+              sh deploy-stage.sh
+            elif [ "${{ github.ref_name }}" == "qa" ]; then
+              sh deploy-qa.sh
+            elif [ "${{ github.ref_name }}" == "dev" ]; then
+              sh deploy-dev.sh
+            fi
+  
