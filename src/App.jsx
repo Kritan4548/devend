@@ -63,7 +63,7 @@ const App = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get('http://52.221.235.70:8000/');
+      const response = await axios.get('http://13.213.56.97:8000/');
       return response.data;
     } catch (error) {
       console.error('Error fetching data', error);

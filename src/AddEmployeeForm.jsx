@@ -13,7 +13,7 @@ const AddEmployeeForm = ({ refreshData }) => {
     e.preventDefault();
 
     try {
-      await axios.post('http://52.221.235.70:8000/', {
+      await axios.post('http://13.213.56.97:8000/', {
         EmployeeID: employeeID,
         FirstName: firstName,
         LastName: lastName,
