@@ -63,7 +63,7 @@ const App = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get('http://13.213.56.97:8000/');
+      const response = await axios.get('http://api-kritan.learn.cloudlaya.com');
       return response.data;
     } catch (error) {
       console.error('Error fetching data', error);

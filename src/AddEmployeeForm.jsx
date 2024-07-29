@@ -13,7 +13,7 @@ const AddEmployeeForm = ({ refreshData }) => {
     e.preventDefault();
 
     try {
-      await axios.post('http://13.213.56.97:8000/', {
+      await axios.post('http://api-kritan.learn.cloudlaya.com', {
         EmployeeID: employeeID,
         FirstName: firstName,
         LastName: lastName,
