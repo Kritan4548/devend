@@ -88,7 +88,7 @@ const App = () => {
         <thead>
           <tr>
             <th>EmployeeID</th>
-            <th>FirstName</th>
+            <th>FirstName1</th>
             <th>LastName</th>
             <th>BirthDate</th>
             <th>HireDate</th>
